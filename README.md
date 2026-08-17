@@ -14,7 +14,23 @@ To write a YACC program to recognize a valid variable which starts with a letter
 6.	Compile the yacc program with YACC compiler to produce output file as y.tab.c. eg $ yacc –d arith_id.y
 7.	Compile these with the C compiler as gcc lex.yy.c y.tab.c
 8.	Enter a statement as input and the valid variables are identified as output.
-# PROGRAM:
+# PROGRAM
+```
+%{
+#include "y.tab.h"
+#include <string.h>
+%}
+
+%%
+[a-zA-Z][a-zA-Z0-9]*    { yylval.str = strdup(yytext); return IDENTIFIER; }
+\n                      { return '\n'; }
+.                       { return yytext[0]; }
+%%
+
+int yywrap() {
+    return 1;
+}
+```
 ```
 %{
 #include <stdio.h>
@@ -48,21 +64,6 @@ int main() {
 
 void yyerror(const char *msg) {
     printf("Invalid variable name\n");
-}
-
-%{
-#include "y.tab.h"
-#include <string.h>
-%}
-
-%%
-[a-zA-Z][a-zA-Z0-9]*    { yylval.str = strdup(yytext); return IDENTIFIER; }
-\n                      { return '\n'; }
-.                       { return yytext[0]; }
-%%
-
-int yywrap() {
-    return 1;
 }
 ```
 # Output:
